@@ -84,3 +84,41 @@ Once the topology has loaded, type the command
 $ pingall
 ```
 This will drum up some traffic between the hosts, as Mininet networks usually don't send traffic unless instructed. So doing a ping between all the hosts generates traffic between them, which causes ONOS to create flow rules so the switches know were to send their traffic. Now if you go back to ONOS's WebUI and hit the 'Topology' tab you should be able to see a network with 2 switches and 2 hosts!
+
+## Install venv
+The website which acts as the UI for FOOSA requires some Python dependancies. Before we continue lets setup our virtual environment before we continue
+```sh
+$ sudo apt-get install python3-venv
+```
+
+## Cloning and FOOSA WebUI
+Lets clone the FOOSA repo into our home folder and navigate to the website folder
+```sh
+$ cd ~
+$ git pull https://github.com/brite3001/FOOSA
+$ cd FOOSA
+$ cd website
+```
+
+## Starting the FOOSA WebUI
+```sh
+$ source env/bin/activate
+$ python3 server.py
+```
+
+Now FOOSA is up and running, we need to give FOOSA a controller to manage!
+Boot up the web browser of your choice and head to: http://127.0.0.1:5000/index.html
+You'll be greeted with a bit of a sad looking screen with no data, as we haven't told FOOSA were out controller is
+
+## Adding a controller to FOOSA
+- Navigate to the "Controller Management" tab in the FOOSA WebUI
+- In controller type select 'ONOS'
+- In IP type the IP of the ONOS controller (check the ONOS WebUI for the controllers IP: http://localhost:8181/onos/ui/#/topo2 the IP will be displayed up the top left)
+
+Now a controllers been added you can now:
+- Add flows
+- Delete flows
+- Check the network topology
+- Check statistics on a device by device basis (scroll down a bit on the network topology page)
+- Manage multiple controllers from the same interface
+- Specific hosts can also be blocked on the home page by selecting a host in the "Restrict a Host" box and clicking the red "Add flow" button. This will stop a particular host from communicating with any other host on the network
