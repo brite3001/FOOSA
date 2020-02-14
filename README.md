@@ -12,7 +12,7 @@ switch lists, host and switch links, flow rules and network statistics.
 - An application that allows hosts on the network to be blocked (all traffic from the blocked
 host is dropped).
 
-# Installastion
+# Installation
 During development heavy use of Docker was used to run the three SDN controllers (ONOS, ODL and FL) and Mininet (used to emulate the network topology). The following installation guide was tested on Ubuntu 19.10 (Specifically PopOS!)
 
 ## Installing Docker (Ubuntu 19.10)
