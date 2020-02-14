@@ -1,0 +1,30 @@
+flow_rule_xml = \
+"""<flow xmlns="urn:opendaylight:flow:inventory">
+    <strict>false</strict>
+    <instructions>
+        <instruction>
+          	<order>1</order>
+            <apply-actions>
+                <action>
+                  <order>1</order>
+                    <flood-all-action/>
+                </action>
+            </apply-actions>
+        </instruction>
+    </instructions>
+    <table_id>1</table_id>
+    <id>flow_id_to_replace</id>
+    <cookie_mask>10</cookie_mask>
+    <out_port>out_port_to_replace</out_port>
+    <installHw>false</installHw>
+    <out_group>2</out_group>
+    <match>
+        <in-port>in_port_to_replace</in-port>
+    </match>
+    <hard-timeout>0</hard-timeout>
+    <cookie>cookie_to_replace</cookie>
+    <idle-timeout>0</idle-timeout>
+    <flow-name>flow_name_to_replace</flow-name>
+    <priority>priority_to_replace</priority>
+    <barrier>false</barrier>
+</flow>"""

@@ -1,0 +1,104 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+
+{%block nav%}
+<div id="app" class="container">
+    <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
+        <a class="navbar-brand" href="#">FOOSA</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="navbarNavDropdown" class="navbar-collapse collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="search_flow.html">Search for a flow<span class="sr-only">(current)</span></a>
+                </li>
+
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="add_flow.html">Add a Flow</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="delete_flow.html">Delete a Flow</a>
+                </li>
+                <li class="nav-item">
+                        <a class="nav-link" href="network_info.html">Display Network Information</a>
+                    </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Controller Setup</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+{% endblock %}
+
+{%block body %}
+
+<div class="flex flex-col w-full bg-green-500 mb-4 justify-center items-center justify-around">
+
+    <div class="flex w-1/2 bg-white items-center justify-center mb-4 mt-4 text-5xl subpixel-antialiased">
+        Flow Management
+    </div>
+
+    <div class="switch-setup-container w-1/2 bg-white border-4 border-white rounded-lg flex flex-col items-center justify-around"
+        style="">
+
+        <div class="text-3xl">
+            Search for a flow
+        </div>
+        <div class="flex flex-col w-10/12 rounded-lg bg-gray-300 items-center justify-around mb-4 mt-4" style="">
+
+            <div class="flex flex-col justify-around w-4/5 rounded mt-4">
+                <div class="flex flex-row items-center justify-around bg-white rounded form-group p-2">
+                    <div id="controller_type_select" class="text-xl text-black pr-2">
+                        Select Controller:
+                    </div>
+                    <select class="form-control" name="controller_type">
+                        <option>OpenDayLight : 127.0.0.1:8000</option>
+                        <option>ONOS : 127.0.0.1:9000</option>
+                        <option>FloodLight : 127.0.0.1:7000</option>
+                    </select>
+                </div>
+
+                <div class="flex flex-row rounded bg-white items-center justify-around p-2 form-group">
+                    <div class="text-xl text-black pr-2">
+                        Flow Name:
+                    </div>
+                    <input type="text" class="form-control w-3/4" id="usr">
+                </div>
+
+                <div class="text-3xl">
+                    Output:
+                </div>
+
+
+
+
+            </div>
+
+
+            <div class="flex rounded bg-white w-4/5 h-64 mb-4 mt-4">
+                <textarea name="" id="" class="w-full">{'flow_name': 'flow123', 'out_port':'1', 'in_port':'2'}</textarea>
+            </div>
+            
+            <div class="pb-4 w-full flex items-center justify-center">
+                <button type="button" class="btn-lg btn-warning w-3/4">Search for flow</button>
+            </div>
+            
+
+        </div>
+
+
+
+
+    </div>
+
+</div>
+
+
+{% endblock %}

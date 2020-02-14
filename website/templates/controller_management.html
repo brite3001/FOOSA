@@ -1,0 +1,298 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+
+{%block nav%}
+<div id="app" class="container">
+    <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
+        <a class="navbar-brand" href="index.html">FOOSA</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="navbarNavDropdown" class="navbar-collapse collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="controller_management.html">Controller Setup <span class="sr-only">(current)</span></a>
+                </li>
+
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="add_flow.html">Add a Flow</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="delete_flow.html">Delete a Flow</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="network_topology.html">Network Topology</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+{% endblock %}
+
+{%block body %}
+
+
+<div class="flex flex-col w-full mb-4 justify-center items-center justify-around">
+
+    <div class="flex w-1/2 bg-white items-center justify-center mb-4 mt-4 text-5xl subpixel-antialiased">
+        Controller Management
+    </div>
+
+    <div class="switch-setup-container w-1/2 bg-white border-4 border-white rounded-lg flex flex-col items-center justify-around"
+        style="">
+
+        <div class="text-3xl">
+            Add a Controller
+        </div>
+
+        <div id = "alert_placeholder_success"></div>
+
+        <div class="flex flex-col justify-around items-center w-10/12 rounded-lg bg-gray-300 mb-4 mt-4">
+
+            <div class="flex flex-col w-2/3 rounded p-2 mt-4">
+                <div class="flex flex-row items-center justify-around bg-white rounded form-group p-2">
+                    <div id="controller_type_select" class="text-xl text-black pr-2">
+                        Controller Type:
+                    </div>
+                    <select class="form-control" id="controller_type">
+                        {% for controller in controller_types %}
+                        <option>{{controller}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="flex flex-row items-center justify-around bg-white rounded form-group p-2">
+                    <div class="text-xl text-black pr-2">
+                        Switch IP:
+                    </div>
+                    <input type="text" class="form-control" id="switch_ip">
+                </div>
+            </div>
+            <div id="action" value="add_switch"></div>
+
+            <button type="button" id="add_controller_button" class="btn-lg btn-success w-2/3 mb-4 mt-2">Add Controller</button>
+
+        </div>
+
+        <div class="text-3xl">
+            Remove a Controller
+        </div>
+
+        <div id = "alert_placeholder_delete"></div>
+
+        <div class="flex flex-col justify-around items-center w-10/12 rounded-lg bg-gray-300 mb-4 mt-4">
+
+            <div class="flex flex-col w-2/3 rounded p-2 mt-4 mb-2">
+                <div class="flex flex-row items-center bg-white rounded p-2 justify-around form-group">
+                    <div class="text-xl text-black text-left pr-2">
+                        Select Controller to remove:
+                    </div>
+                    <select id="delete_controller_selection" class="form-control">
+                        {% for controller in controller_list %}
+                            <option>{{controller[0]}} : {{controller[1]}}</option>
+                         {% endfor %}
+                        <!-- <option>2</option>
+                        <option>3</option>
+                        <option>4</option> -->
+                    </select>
+                </div>
+
+            </div>
+
+            <button id="delete_controller_button" type="button" class="btn-lg btn-danger w-2/3 mb-4 mt-2">Delete Controller</button>
+
+        </div>
+
+        <div class="text-3xl">
+            Configured controllers
+        </div>
+        <div class="flex flex-wrap flex-row items-center justify-around w-10/12 rounded-lg bg-gray-300 mb-4 mt-4"
+            style="">
+            {% for controller in controller_list %}
+                {% if controller[0] == 'ONOS' %}
+                    <div class="flex flex-col justify-center items-center m-4 w-32 h-32">
+                            <img class="w-full" src="/static/images/onos.png" alt="Related Book 1" height="80%">
+                            <div class="text-lg">
+                                {{controller[1]}}
+                            </div>
+                    </div>
+                {% endif %}
+
+                {% if controller[0] == 'FloodLight' %}
+                    <div class="flex flex-col justify-center items-center m-4 w-32 h-32">
+                        <img class="w-full" src="/static/images/fl.png" alt="Related Book 1" height="80%">
+                        <div class="text-lg">
+                            {{controller[1]}}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if controller[0] == 'OpenDayLight' %}
+                    <div class="flex flex-col justify-center items-center m-4 w-32 h-32">
+                        <img class="w-full" src="/static/images/odl.png" alt="Related Book 1" height="80%">
+                        <div class="text-lg">
+                            {{controller[1]}}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            
+
+
+        </div>
+
+    </div>
+
+</div>
+
+{% block scripts %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script type="text/javascript">
+
+window.onload = function() {
+	// setup the button click for add controller button
+	document.getElementById("add_controller_button").onclick = function() {
+		add_controller()
+	};
+
+    // click delete button will trigger delete_controller()
+    document.getElementById("delete_controller_button").onclick = function() {
+		delete_controller()
+	};
+}
+
+
+function delete_controller() {
+    controller = document.getElementById("delete_controller_selection").value;
+    $.ajax({
+        type: "POST",
+        url: '/delete_controller',
+        data: controller,
+        dataType: "html",
+        //contentType: "application/text",
+        success: function(data) {
+            // Run the code here that needs
+            //    to access the data returned
+            //alert(data);
+            
+            // print the bootstrap alert
+            delete_controller_success()
+            //reload the page
+            window.location.reload(false); 
+            return switch_ip;
+        },
+        error: function() {
+            delete_controller_fail()
+            window.location.reload(false); 
+            return('error')
+        }
+    });
+	// stop link reloading the page
+ event.preventDefault();
+}
+
+
+function add_controller() {
+	// grab the data from the divs
+    switch_ip = document.getElementById("switch_ip").value;
+    controller_type = document.getElementById("controller_type").value;
+    // ajax POST request
+    $.ajax({
+        type: "POST",
+        url: '/add_controller',
+        data: JSON.stringify({ ip : switch_ip, type: controller_type }),
+        dataType: "html",
+        contentType: "application/json",
+        success: function(data) {
+            // Run the code here that needs
+            //    to access the data returned
+            //alert(data);
+            
+            // print the bootstrap alert
+            add_controller_success()
+            //reload the page
+            window.location.reload(false); 
+            return switch_ip;
+        },
+        error: function() {
+            add_controller_fail()
+            window.location.reload(false); 
+            return('error')
+        }
+    });
+	// stop link reloading the page
+ event.preventDefault();
+}
+
+
+/////////////
+// THERE IS A LOT OF BOOTSTRAP ALERT STUFF HERE BECAUSE EACH bootstrap.alert function with edit 
+// alert_placeholder_delete or alert_placeholder_success and another two to change alert-success and alert-fail
+// to change the colour of the bootstrap alert
+//////////////
+bootstrap_alert = function() {}
+// alert for the success message
+bootstrap_alert.add_success = function(message) {
+            $('#alert_placeholder_success').html('<div class="alert alert-success alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>'+message+'</span></div>')
+        }
+
+
+bootstrap_alert.delete_success = function(message) {
+    $('#alert_placeholder_delete').html('<div class="alert alert-success alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>'+message+'</span></div>')
+}
+
+// alert for the fail message
+bootstrap_alert.add_fail = function(message) {
+    $('#alert_placeholder_success').html('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>'+message+'</span></div>')
+}
+
+bootstrap_alert.delete_fail = function(message) {
+    $('#alert_placeholder_delete').html('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>'+message+'</span></div>')
+}
+    
+// function to display the success message
+function add_controller_success() {
+            bootstrap_alert.add_success('Successfully added Controller!');
+};
+
+// function to display the success message
+function delete_controller_success() {
+            bootstrap_alert.delete_success('Successfully deleted Controller!');
+};
+
+// function to display the fail message
+function add_controller_fail() {
+            bootstrap_alert.add_fail('Failed to add Controller!');
+};
+
+// function to display the fail message
+function delete_controller_fail() {
+            bootstrap_alert.delete_fail('Failed to delete Controller!');
+};
+
+// closes alert-success & alert-danger classes in 5 seconds
+// kind of broken but we refreshing the page so they go away...
+window.setTimeout(function () {
+    $(".alert-success").fadeTo(500, 0).slideUp(500, function () {
+        $(this).remove();
+    });
+    $(".alert-danger").fadeTo(500, 0).slideUp(500, function () {
+        $(this).remove();
+    });
+}, 5000);
+
+</script>
+
+
+{% endblock %}
+
+
+{% endblock %}
+
+

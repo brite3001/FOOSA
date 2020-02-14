@@ -1,0 +1,240 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+
+{%block nav%}
+<div id="app" class="container">
+    <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
+        <a class="navbar-brand" href="index.html">FOOSA</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="navbarNavDropdown" class="navbar-collapse collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="delete_flow.html">Delete a flow<span class="sr-only">(current)</span></a>
+                </li>
+
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="add_flow.html">Add a Flow</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="network_topology.html">Network Topology</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="controller_management.html">Controller Setup</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+{% endblock %}
+
+{%block body %}
+
+<div class="flex flex-col w-full pb-4 items-center justify-around">
+
+    <div class="flex flex-col bg-gray-300 w-2/5 rounded-lg items-center justify-around mb-4 mt-4">
+        <div id="alert_placeholder_success"></div>
+
+        <div class="flex flex-col justify-around w-4/5 rounded mt-4">
+            <div class="flex flex-row items-center justify-around bg-white rounded form-group p-2">
+                <div id="controller_type_select" class="text-xl text-black pr-2">
+                    Select Controller:
+                </div>
+                <select class="form-control" id="selected_controller">
+                    {% for controller in controller_list %}
+                    <option>{{controller[0]}}, {{controller[1]}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="flex flex-row rounded bg-white items-center justify-around p-2 form-group">
+                <div class="text-xl text-black pr-2">
+                    Flow Name:
+                </div>
+                <select class="form-control" id="selected_flow">
+                </select>
+            </div>
+
+            <div class="flex w-full item-center justify-start text-2xl text-black pt-4">
+                API Status:
+            </div>
+
+            <div class="flex rounded bg-white w-full h-32 mb-4 mt-4">
+                <textarea name="" id="info_text_area" class="w-full rounded"></textarea>
+            </div>
+
+
+            <div class="pb-4 pt-4 w-full flex items-center justify-center">
+                <button id="delete_button" type="button" class="btn-lg btn-danger w-full">Delete flow</button>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="text-3xl pt-4 pb-4">
+            Flows currently installed on the network:
+    </div>
+
+    <div class="flex w-4/5 p-4 bg-gray-300 rounded-lg" id="tableGoesHere" style="overflow-x:auto;"></div>
+
+
+</div>
+
+{% block scripts %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/4.4.1/js/tabulator.js"
+    integrity="sha256-R5HYi8HaRkw08iK1JKLgKFqIP5IRByAags5FGTYZDfc=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+
+    window.onload = function () {
+        // setup the button click
+        document.getElementById("delete_button").onclick = function () {
+            delete_flow()
+        };
+    }
+
+    // run functions on page load
+    document.addEventListener("DOMContentLoaded", function () {
+        populate_flow_table_and_flow_list_selection();
+    });
+
+    // thanks travishorn from your medium post
+    function json2table(json, classes) {
+        var cols = Object.keys(json[0]);
+
+        var headerRow = '';
+        var bodyRows = '';
+
+        classes = classes || '';
+
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        cols.map(function (col) {
+            headerRow += '<th>' + capitalizeFirstLetter(col) + '</th>';
+        });
+
+        json.map(function (row) {
+            bodyRows += '<tr>';
+
+            cols.map(function (colName) {
+                bodyRows += '<td>' + row[colName] + '</td>';
+            })
+
+            bodyRows += '</tr>';
+        });
+
+        return '<table class="' +
+            classes +
+            '"><thead><tr>' +
+            headerRow +
+            '</tr></thead><tbody>' +
+            bodyRows +
+            '</tbody></table>';
+    }
+
+    // takes a flow list and converts the match_condition and out_port nested JSON objects in strings
+    // so they can be parsed by the json2table function 
+    function convert_nested_json_to_string(flow_list) {
+        i = 0
+        for (i = 0; i < flow_list.length; i++) {
+            flow_list[i]["match_condition"] = JSON.stringify(flow_list[i]["match_condition"])
+            flow_list[i]["out_port"] = JSON.stringify(flow_list[i]["out_port"])
+        }
+        return (flow_list)
+
+    }
+
+
+    function populate_flow_table_and_flow_list_selection() {
+        // grab the data from the divs
+        selected_controller = document.getElementById("selected_controller").value.split(",");
+        // ajax POST request
+        $.ajax({
+            type: "POST",
+            url: '/get_network_info',
+            data: JSON.stringify({ ip: selected_controller[1], type: selected_controller[0] }),
+            dataType: "html",
+            contentType: "application/json",
+            success: function (data) {
+
+                flow_list = JSON.parse(data)["flows"]
+                flow_list = convert_nested_json_to_string(flow_list)
+                //console.log(flow_list)
+
+                for (i = 0; i < flow_list.length; i++) {
+                    $("#selected_flow").append("<option>" + flow_list[i]["flow_name"] + ", " + flow_list[i]["switch_name"] + "</option>");
+                }
+
+                $("#tableGoesHere tr").remove(); 
+                document.getElementById('tableGoesHere').innerHTML = json2table(flow_list, 'table bg-white rounded');
+
+            },
+            error: function () {
+                alert('Error populating flow table!')
+            }
+        });
+        // stop link reloading the page
+        event.preventDefault();
+    }
+
+    function delete_flow() {
+        // grab the data from the divs
+        selected_controller = document.getElementById("selected_controller").value.split(",");
+        flow = document.getElementById("selected_flow").value.split(",")
+
+        console.log(flow)
+        console.log(selected_controller)
+        // ajax POST request
+        $.ajax({
+            type: "POST",
+            url: '/delete_flow',
+            data: JSON.stringify({ controller_name: selected_controller[0], flow_name: flow[0], switch_name: flow[1].trim() }),
+            dataType: "html",
+            contentType: "application/json",
+            success: function (data) {
+                // Run the code here that needs
+                //    to access the data returned
+                //alert(data);
+                document.getElementById("info_text_area").value = data
+                populate_flow_table_and_flow_list_selection()
+
+            },
+            error: function () {
+                document.getElementById("info_text_area").value = data
+                populate_flow_table_and_flow_list_selection()
+            }
+        });
+        // stop link reloading the page
+        event.preventDefault();
+    }
+
+    bootstrap_alert = function () { }
+    // alert for the success message
+    bootstrap_alert.add_success = function (message) {
+        $('#alert_placeholder_success').html('<div class="alert alert-success id="bs_alert" alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>' + message + '</span></div>')
+    }
+
+    // function to display the success message
+    function add_flow_success(message) {
+        bootstrap_alert.add_success(message);
+    };
+
+
+
+</script>
+
+
+{% endblock %}
+
+
+{% endblock %}

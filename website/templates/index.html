@@ -1,0 +1,321 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+
+{%block nav%}
+<div id="app" class="container">
+    <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
+        <a class="navbar-brand" href="index.html">FOOSA</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="navbarNavDropdown" class="navbar-collapse collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+
+                </li>
+
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="add_flow.html">Add a Flow</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="delete_flow.html">Delete a Flow</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="network_topology.html">Network Topology</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="controller_management.html">Controller Management</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+{% endblock %}
+
+{%block body %}
+
+
+<div class="flex flex-col w-full bg-white-200 pb-4 justify-center items-center justify-around">
+
+    <div>
+
+    </div>
+    <div class="flex w-1/2 bg-white items-center justify-center mb-4 mt-4 text-5xl subpixel-antialiased">
+        Controller Information
+    </div>
+
+    <div class="flex flex-wrap flex-row items-center justify-around w-1/2 rounded-lg bg-gray-300 pb-4 mb-4 mt-4">
+        <div class="flex flex-wrap flex-col items-center justify-around w-1/2 rounded-lg bg-gray-300">
+            <div class="text-xl">
+                Selected Controller
+            </div>
+            {% for controller in controller_list %}
+            {% if controller[0] == 'ONOS' %}
+            <div class="flex flex-col justify-center items-center m-4 w-32 h-32">
+                <img class="w-full" src="/static/images/onos.png" alt="Related Book 1" height="80%">
+                <div class="text-lg">
+                    {{controller[1]}}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if controller[0] == 'FloodLight' %}
+            <div class="flex flex-col justify-center items-center m-4 w-32 h-32">
+                <img class="w-full" src="/static/images/fl.png" alt="Related Book 1" height="80%">
+                <div class="text-lg">
+                    {{controller[1]}}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if controller[0] == 'OpenDayLight' %}
+            <div class="flex flex-col justify-center items-center m-4 w-32 h-32">
+                <img class="w-full" src="/static/images/odl.png" alt="Related Book 1" height="80%">
+                <div class="text-lg">
+                    {{controller[1]}}
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+
+            <select id="selected_controller" class="form-control w-3/4">
+                {% for controller in controller_list %}
+                <option>{{controller[0]}}, {{controller[1]}}</option>
+                {% endfor %}
+                <!-- <option>2</option>
+            <option>3</option>
+            <option>4</option> -->
+            </select>
+        </div>
+
+        <div class="flex h-64 flex-wrap flex-col items-center justify-between w-1/2">
+            <div class="flex flex-col items-center justify-start pt-2 w-4/5 h-24">
+                <div class="text-xl">
+                    Restrict a host
+                </div>
+            </div>
+
+            <div class="flex flex-col items-center justify-end w-4/5 h-24">
+                <select class="form-control w-3/4" id="selected_switch">
+                </select>
+                <select class="form-control w-3/4 mt-2" id="host_to_restrict_select">
+                </select>
+                <div class="pt-2 w-full flex items-center justify-center">
+                    <button type="button" class="btn btn-danger w-3/4" id="restrict_new_host">Add Flow</button>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+    <div
+        class="switch-setup-container w-3/4 bg-white border-4 border-white rounded-lg flex flex-row flex-wrap flex-col items-center justify-center">
+
+        <div
+            class="flex flex-col items-center justify-between bg-gray-300 h-64 w-1/5 m-4 pt-4 pb-4 pl-1 pr-1 rounded-lg">
+            <div class="mb-4 bg-white-500">
+                <h1>Switches</h1>
+            </div>
+
+            <div id="switch_list" class="flex flex-col rounded-lg items-center justify-between bg-gray-300  w-5/6">
+
+            </div>
+        </div>
+
+
+        <div
+            class="flex flex-col items-center justify-between bg-gray-300 h-64 w-1/5 m-4 pt-4 pb-4 pl-1 pr-1 rounded-lg">
+            <div class="mb-4">
+                <h1>Hosts</h1>
+            </div>
+
+            <div id="host_list" class="flex flex-col rounded-lg items-center justify-between w-5/6">
+
+            </div>
+        </div>
+
+
+        <div
+            class="flex flex-col items-center justify-between bg-gray-300 h-64 w-1/5 m-4 pt-4 pb-4 pl-1 pr-1 rounded-lg">
+            <div class="mb-4">
+                <h1>Links</h1>
+            </div>
+
+            <div id="links_list" class="flex flex-col rounded-lg items-center justify-between w-5/6">
+
+            </div>
+        </div>
+
+
+        <div
+            class="flex bg-gray-300 flex-col items-center justify-between h-64 w-1/5 m-4 pt-4 pb-4 pl-1 pr-1 rounded-lg">
+            <div class="mb-4">
+                <h1>Restricted Hosts</h1>
+            </div>
+
+            <div id="restricted_list" class="flex flex-col rounded items-center justify-between bg-white w-5/6">
+                {% for host in restricted_hosts %}
+                <h1 class="pt-1 pb-1">{{host}}</h1>
+                {% endfor %}
+
+            </div>
+        </div>
+
+        <div class="flex w-full p-4 bg-gray-300 rounded-lg" id="tableGoesHere" style="overflow-x:auto;"></div>
+
+
+
+    </div>
+
+</div>
+
+{% block scripts %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script type="text/javascript">
+
+    window.onload = function () {
+        // setup the button click
+        document.getElementById("restrict_new_host").onclick = function () {
+            add_to_restricted_list()
+        }
+    }
+
+    // run functions on page load
+    document.addEventListener("DOMContentLoaded", function () {
+        populate_flow_table_switches_hosts_and_links();
+    });
+
+    // thanks travishorn from your medium post
+    function json2table(json, classes) {
+        var cols = Object.keys(json[0]);
+
+        var headerRow = '';
+        var bodyRows = '';
+
+        classes = classes || '';
+
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        cols.map(function (col) {
+            headerRow += '<th>' + capitalizeFirstLetter(col) + '</th>';
+        });
+
+        json.map(function (row) {
+            bodyRows += '<tr>';
+
+            cols.map(function (colName) {
+                bodyRows += '<td>' + row[colName] + '</td>';
+            })
+
+            bodyRows += '</tr>';
+        });
+
+        return '<table class="' +
+            classes +
+            '"><thead><tr>' +
+            headerRow +
+            '</tr></thead><tbody>' +
+            bodyRows +
+            '</tbody></table>';
+    }
+
+    // takes a flow list and converts the match_condition and out_port nested JSON objects in strings
+    // so they can be parsed by the json2table function 
+    function convert_nested_json_to_string(flow_list) {
+        i = 0
+        for (i = 0; i < flow_list.length; i++) {
+            flow_list[i]["match_condition"] = JSON.stringify(flow_list[i]["match_condition"])
+            flow_list[i]["out_port"] = JSON.stringify(flow_list[i]["out_port"])
+        }
+        return (flow_list)
+
+    }
+
+
+    function populate_flow_table_switches_hosts_and_links() {
+        // grab the data from the divs
+        selected_controller = document.getElementById("selected_controller").value.split(",");
+        // ajax POST request
+        $.ajax({
+            type: "POST",
+            url: '/get_network_info',
+            data: JSON.stringify({ ip: selected_controller[1], type: selected_controller[0] }),
+            dataType: "html",
+            contentType: "application/json",
+            success: function (data) {
+
+                controller_data = JSON.parse(data)
+                flow_list = convert_nested_json_to_string(controller_data['flows'])
+                console.log(controller_data)
+
+                var i = 0
+                for (i = 0; i < controller_data['switch_list'].length; i++) {
+                    document.getElementById('switch_list').innerHTML += '<h1 class="bg-white rounded p-1 mt-1"> ' + controller_data['switch_list'][i] + '</h1>';
+                    $("#selected_switch").append("<option>" + controller_data['switch_list'][i] + "</option>");
+                }
+
+                for (i = 0; i < controller_data['host_list'].length; i++) {
+                    document.getElementById('host_list').innerHTML += '<h1 class="bg-white rounded p-1 mt-1 w-4/5"> ' + controller_data['host_list'][i] + '</h1>';
+                }
+                host_list = controller_data['host_list']
+
+                for (i = 0; i < host_list.length; i++) {
+                    $("#host_to_restrict_select").append("<option>" + host_list[i] + "</option>");
+                }
+
+                document.getElementById('tableGoesHere').innerHTML = json2table(flow_list, 'table bg-white rounded');
+
+            },
+            error: function () {
+                alert('Error populating flow table!')
+            }
+        });
+        // stop link reloading the page
+        event.preventDefault();
+    }
+
+    function add_to_restricted_list() {
+        // grab the data from the divs
+        host_to_restrict = document.getElementById("host_to_restrict_select").value
+        selected_controller = document.getElementById("selected_controller").value.split(",");
+        selected_switch = document.getElementById("selected_switch").value;
+        // ajax POST request
+        $.ajax({
+            type: "POST",
+            url: '/add_to_restricted_list',
+            data: JSON.stringify({ host: host_to_restrict, controller: selected_controller[0], switch: selected_switch }),
+            dataType: "html",
+            contentType: "application/json",
+            success: function (data) {
+                window.location.reload(false);
+
+            },
+            error: function () {
+                window.location.reload(false);
+                alert('Error populating flow table!')
+            }
+        });
+        // stop link reloading the page
+        event.preventDefault();
+    }
+
+
+
+</script>
+
+
+{% endblock %}
+
+
+{% endblock %}
